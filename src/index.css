@@ -1,0 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  
+  --color-primary: #3b82f6;
+  --color-primary-container: #dbeafe;
+  --color-on-primary-container: #1e3a8a;
+  
+  --color-surface: #f8fbff;
+  --color-surface-container-low: #f8faff;
+  --color-surface-container: #f0f7ff;
+  --color-surface-container-high: #ebf3ff;
+  --color-surface-container-highest: #e2edff;
+  --color-surface-container-lowest: #ffffff;
+  
+  --color-on-surface: #1e293b;
+  --color-on-surface-variant: #64748b;
+  
+  --color-outline: #94a3b8;
+  --color-outline-variant: #cbd5e1;
+  
+  --color-secondary: #5b8ad2;
+  --color-tertiary: #13c2c2;
+  --color-error: #ef4444;
+  --color-error-container: #fee2e2;
+}
+
+@layer base {
+  body {
+    @apply font-sans bg-surface text-on-surface antialiased;
+  }
+}
+
+.glass-nav {
+  @apply bg-white/70 backdrop-blur-2xl;
+}
+
+.glass-card {
+  @apply bg-white/80 backdrop-blur-xl border border-white;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
