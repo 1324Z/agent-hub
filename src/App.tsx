@@ -8,6 +8,7 @@ import OperationsConfig from './pages/OperationsConfig';
 import OperationsSupport from './pages/OperationsSupport';
 import SessionManagement from './pages/SessionManagement';
 import DataAnalysis from './pages/DataAnalysis';
+import { ConfigProvider } from './contexts/ConfigContext';
 
 const AppContent = () => {
   const location = useLocation();
@@ -36,8 +37,10 @@ const AppContent = () => {
 
 export default function App() {
   return (
-    <Router>
-      <AppContent />
-    </Router>
+    <ConfigProvider>
+      <Router>
+        <AppContent />
+      </Router>
+    </ConfigProvider>
   );
 }

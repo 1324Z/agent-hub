@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   Rocket, 
   Terminal, 
@@ -7,13 +7,316 @@ import {
   History, 
   CheckCircle2, 
   ArrowRight,
-  Plus
+  Plus,
+  Layout,
+  Save,
+  Users,
+  Star,
+  Trash2,
+  Palette,
+  TrendingUp,
+  Globe,
+  Bolt,
+  Handshake
 } from 'lucide-react';
 import { motion } from 'motion/react';
+import { useConfig, PopularAgent } from '../contexts/ConfigContext';
 
 const OperationsConfig = () => {
+  const { config, updateConfig } = useConfig();
+  const [formData, setFormData] = useState(config);
+  const [isSaving, setIsSaving] = useState(false);
+
+  const handleSave = () => {
+    setIsSaving(true);
+    setTimeout(() => {
+      updateConfig(formData);
+      setIsSaving(false);
+    }, 800);
+  };
+
+  const addAgent = () => {
+    const newAgent: PopularAgent = {
+      id: Date.now().toString(),
+      title: '新智能体',
+      iconName: 'Terminal',
+      rating: '5.0',
+      users: '0',
+      imageUrl: '',
+      imgSeed: 'new'
+    };
+    setFormData({
+      ...formData,
+      popularAgents: [...formData.popularAgents, newAgent]
+    });
+  };
+
+  const removeAgent = (id: string) => {
+    setFormData({
+      ...formData,
+      popularAgents: formData.popularAgents.filter(a => a.id !== id)
+    });
+  };
+
+  const updateAgent = (id: string, updates: Partial<PopularAgent>) => {
+    setFormData({
+      ...formData,
+      popularAgents: formData.popularAgents.map(a => a.id === id ? { ...a, ...updates } : a)
+    });
+  };
+
   return (
     <div className="p-8 space-y-8">
+      {/* Landing Page Configuration */}
+      <section className="bg-white rounded-[2.5rem] p-8 border border-blue-100 shadow-sm">
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center gap-3">
+            <div className="p-3 bg-blue-50 rounded-2xl text-blue-600">
+              <Layout className="w-6 h-6" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-slate-800">首页内容配置</h3>
+              <p className="text-slate-500 text-sm">实时更新门户首页的核心展示内容</p>
+            </div>
+          </div>
+          <button 
+            onClick={handleSave}
+            disabled={isSaving}
+            className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white font-bold rounded-xl shadow-lg shadow-blue-600/20 hover:bg-blue-700 transition-all disabled:opacity-50"
+          >
+            {isSaving ? (
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+            ) : (
+              <Save className="w-5 h-5" />
+            )}
+            <span>{isSaving ? '正在保存...' : '保存配置'}</span>
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-bold text-slate-700 mb-2">主标题 (需包含“，”分隔)</label>
+              <input 
+                type="text"
+                value={formData.heroTitle}
+                onChange={(e) => setFormData({ ...formData, heroTitle: e.target.value })}
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                placeholder="例如：智能赋能，连接未来"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-bold text-slate-700 mb-2">副标题</label>
+              <input 
+                type="text"
+                value={formData.heroSubtitle}
+                onChange={(e) => setFormData({ ...formData, heroSubtitle: e.target.value })}
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                placeholder="例如：下一代 AI 运营"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-bold text-slate-700 mb-2">描述文本</label>
+              <textarea 
+                rows={4}
+                value={formData.heroDescription}
+                onChange={(e) => setFormData({ ...formData, heroDescription: e.target.value })}
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all resize-none"
+                placeholder="输入首页详细描述..."
+              />
+            </div>
+          </div>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-bold text-slate-700 mb-2">背景图片 URL</label>
+              <input 
+                type="text"
+                value={formData.heroBgImage}
+                onChange={(e) => setFormData({ ...formData, heroBgImage: e.target.value })}
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                placeholder="https://..."
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-bold text-slate-700 mb-2">预览图 URL</label>
+              <input 
+                type="text"
+                value={formData.heroPreviewImage}
+                onChange={(e) => setFormData({ ...formData, heroPreviewImage: e.target.value })}
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                placeholder="https://..."
+              />
+            </div>
+            <div className="p-4 bg-blue-50 rounded-2xl border border-blue-100">
+              <h4 className="text-sm font-bold text-blue-800 mb-2 flex items-center gap-2">
+                <Beaker className="w-4 h-4" />
+                配置提示
+              </h4>
+              <p className="text-xs text-blue-600 leading-relaxed">
+                修改后的内容将立即保存在本地缓存中。主标题请务必使用中文逗号“，”进行分隔，以确保渐变色效果正确应用。
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Popular Agents Sub-configuration */}
+        <div className="mt-12">
+          <div className="flex items-center justify-between mb-6">
+            <h4 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+              <Star className="w-5 h-5 text-amber-500 fill-current" />
+              热门智能体管理
+            </h4>
+            <button 
+              onClick={addAgent}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 font-bold rounded-lg hover:bg-blue-100 transition-all"
+            >
+              <Plus className="w-4 h-4" />
+              添加智能体
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {formData.popularAgents.map((agent) => (
+              <div key={agent.id} className="p-6 bg-slate-50 rounded-[2rem] border border-slate-100 relative group">
+                <button 
+                  onClick={() => removeAgent(agent.id)}
+                  className="absolute top-4 right-4 p-2 text-slate-400 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+                
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">名称</label>
+                    <input 
+                      type="text"
+                      value={agent.title}
+                      onChange={(e) => updateAgent(agent.id, { title: e.target.value })}
+                      className="w-full bg-white px-3 py-2 rounded-lg border border-slate-200 text-sm outline-none focus:border-blue-500"
+                    />
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">评分</label>
+                      <input 
+                        type="text"
+                        value={agent.rating}
+                        onChange={(e) => updateAgent(agent.id, { rating: e.target.value })}
+                        className="w-full bg-white px-3 py-2 rounded-lg border border-slate-200 text-sm outline-none focus:border-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">用户数</label>
+                      <input 
+                        type="text"
+                        value={agent.users}
+                        onChange={(e) => updateAgent(agent.id, { users: e.target.value })}
+                        className="w-full bg-white px-3 py-2 rounded-lg border border-slate-200 text-sm outline-none focus:border-blue-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">图标</label>
+                      <select 
+                        value={agent.iconName}
+                        onChange={(e) => updateAgent(agent.id, { iconName: e.target.value })}
+                        className="w-full bg-white px-3 py-2 rounded-lg border border-slate-200 text-sm outline-none focus:border-blue-500"
+                      >
+                        <option value="Terminal">Terminal</option>
+                        <option value="Palette">Palette</option>
+                        <option value="TrendingUp">TrendingUp</option>
+                        <option value="Globe">Globe</option>
+                        <option value="Bolt">Bolt</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">图片 Seed</label>
+                      <input 
+                        type="text"
+                        value={agent.imgSeed}
+                        onChange={(e) => updateAgent(agent.id, { imgSeed: e.target.value })}
+                        className="w-full bg-white px-3 py-2 rounded-lg border border-slate-200 text-sm outline-none focus:border-blue-500"
+                        placeholder="备用 (关键词)"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">图片 URL (优先使用)</label>
+                    <input 
+                      type="text"
+                      value={agent.imageUrl}
+                      onChange={(e) => updateAgent(agent.id, { imageUrl: e.target.value })}
+                      className="w-full bg-white px-3 py-2 rounded-lg border border-slate-200 text-sm outline-none focus:border-blue-500"
+                      placeholder="https://..."
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Partner Section Configuration (Moved inside) */}
+          <div className="mt-12 pt-12 border-t border-slate-50">
+            <div className="flex items-center gap-3 mb-8">
+              <div className="p-3 bg-blue-50 rounded-2xl text-blue-600">
+                <Handshake className="w-6 h-6" />
+              </div>
+              <div>
+                <h4 className="text-lg font-bold text-slate-800">合作伙伴板块配置</h4>
+                <p className="text-slate-500 text-sm">管理首页“成为合作伙伴”区域的文案</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-2">板块标题</label>
+                  <input 
+                    type="text"
+                    value={formData.partnerTitle}
+                    onChange={(e) => setFormData({ ...formData, partnerTitle: e.target.value })}
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-2">板块描述</label>
+                  <textarea 
+                    rows={3}
+                    value={formData.partnerDescription}
+                    onChange={(e) => setFormData({ ...formData, partnerDescription: e.target.value })}
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all resize-none"
+                  />
+                </div>
+              </div>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-2">统计数据标题</label>
+                  <input 
+                    type="text"
+                    value={formData.partnerStats}
+                    onChange={(e) => setFormData({ ...formData, partnerStats: e.target.value })}
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-slate-700 mb-2">统计数据副标题</label>
+                  <input 
+                    type="text"
+                    value={formData.partnerStatsSub}
+                    onChange={(e) => setFormData({ ...formData, partnerStatsSub: e.target.value })}
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Hero Section */}
       <section className="grid grid-cols-12 gap-6">
         <div className="col-span-12 lg:col-span-8 relative overflow-hidden rounded-[2.5rem] h-[300px] group bg-blue-600">
@@ -71,7 +374,7 @@ const OperationsConfig = () => {
       </section>
 
       {/* Configuration Modules */}
-      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Module 1 */}
         <div className="group bg-white hover:bg-blue-50/30 transition-all duration-300 rounded-[2.5rem] p-8 relative overflow-hidden border border-slate-100 shadow-sm">
           <div className="absolute -right-4 -bottom-4 text-blue-600/5 group-hover:scale-110 group-hover:text-blue-600/10 transition-transform duration-500">
@@ -99,33 +402,6 @@ const OperationsConfig = () => {
         </div>
 
         {/* Module 2 */}
-        <div className="group bg-white hover:bg-blue-50/30 transition-all duration-300 rounded-[2.5rem] p-8 border border-slate-100 shadow-sm">
-          <h4 className="text-lg font-bold mb-4 flex items-center gap-2">
-            <Beaker className="text-blue-600 w-5 h-5" />
-            AB实验平台监控
-          </h4>
-          <div className="grid grid-cols-2 gap-3 mb-6">
-            <div className="p-4 bg-slate-50 rounded-2xl flex flex-col">
-              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">正在运行</span>
-              <span className="text-2xl font-black text-blue-600">14</span>
-            </div>
-            <div className="p-4 bg-slate-50 rounded-2xl flex flex-col">
-              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">待分析</span>
-              <span className="text-2xl font-black text-slate-800">03</span>
-            </div>
-          </div>
-          <div className="flex items-center gap-2 text-sm text-slate-500 mb-6">
-            <span className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
-              <span className="block h-full bg-blue-600 w-3/4"></span>
-            </span>
-            <span className="font-bold text-blue-600">75%</span>
-          </div>
-          <button className="w-full py-2 bg-blue-50 text-blue-600 text-sm font-bold rounded-lg hover:bg-blue-600 hover:text-white transition-colors">
-            实时看板
-          </button>
-        </div>
-
-        {/* Module 3 */}
         <div className="group bg-white hover:bg-blue-50/30 transition-all duration-300 rounded-[2.5rem] p-8 border border-slate-100 shadow-sm">
           <h4 className="text-lg font-bold mb-4 flex items-center gap-2">
             <Send className="text-blue-600 w-5 h-5" />
